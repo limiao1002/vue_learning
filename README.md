@@ -1,2 +1,47 @@
 # vue_learning
 学习vue
+1.v-if和v-for哪个优先级高？如果两个同时出现，应该怎么优化得到更好的性能？
+v-for优先级高，官方文档介绍不建议v-if和v-for同时用在一个元素上,可能是因为v-for优先级高，先遍历生成vNode,然后又根据v-if显示和移除vNode,造成效率浪费。优化方法是：在v-for外面包裹一个dom节点，在该dom节点上用v-if控制显示隐藏。①为了过滤一个列表中的项目（比如v-for="user in users" v-if="user.isActive"）,在这种情形下，请将users替换位一个计算熟悉（比如activeUsers）,让其返回过滤后的列表。
+②为了避免渲染本应该被隐藏的列表（比如v-for="user in users" v-if="shouldShowUsers"）,在这种情形下，请将v-if移动至容器元素上（比如ul,ol）
+<ul>
+  <li v-for="user in users" v-if="user.isActive" :key="user.id">{{user.name}}</li>
+</ul>
+将会经过如下运算：
+this.users.map(function(user){
+  if(user.isActive){
+    return user.name
+  }
+})
+因此哪怕我们只渲染出一小部分用户的元素，也得在每次重渲染的时候遍历整个列表，不论活跃用户是否发生了变化。通过将其更换为在如下的一个计算属性上遍历：
+computed:{
+  activeUsers:function(){
+    return this.users.filter(function(user){
+      return user.isActive
+    })
+  }
+}
+<ul>
+  <li v-for="user in activeUsers" :key="user.id">{{user.name}}</li>
+</ul>
+为了获得同样的好处，我们也可以把：
+
+<ul>
+  <li
+    v-for="user in users"
+    v-if="shouldShowUsers"
+    :key="user.id"
+  >
+    {{ user.name }}
+  </li>
+</ul>
+更新为：
+
+<ul v-if="shouldShowUsers">
+  <li
+    v-for="user in users"
+    :key="user.id"
+  >
+    {{ user.name }}
+  </li>
+</ul>
+通过将 v-if 移动到容器元素，我们不会再对列表中的每个用户检查 shouldShowUsers。取而代之的是，我们只检查它一次，且不会在 shouldShowUsers 为否的时候运算 v-for。
