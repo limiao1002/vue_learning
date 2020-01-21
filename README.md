@@ -1,5 +1,7 @@
 # vue_learning
-学习vue
+2.Vue组件data选项为什么必须是个函数而Vue的根实例则没有此限制？
+因为组件是可以复用的，JS里对象是引用关系，如果组件data是一个对象，那么子组件中的data属性值会互相污染，产生副作用。所以一个组件的data选项必须是一个函数，因此每个实例可以维护一份被返回对象的独立的拷贝。new Vue的实例是不会被复用的，因此不存在以上问题。
+
 1.v-if和v-for哪个优先级高？如果两个同时出现，应该怎么优化得到更好的性能？
 v-for优先级高，官方文档介绍不建议v-if和v-for同时用在一个元素上,可能是因为v-for优先级高，先遍历生成vNode,然后又根据v-if显示和移除vNode,造成效率浪费。优化方法是：在v-for外面包裹一个dom节点，在该dom节点上用v-if控制显示隐藏。①为了过滤一个列表中的项目（比如v-for="user in users" v-if="user.isActive"）,在这种情形下，请将users替换位一个计算熟悉（比如activeUsers）,让其返回过滤后的列表。
 ②为了避免渲染本应该被隐藏的列表（比如v-for="user in users" v-if="shouldShowUsers"）,在这种情形下，请将v-if移动至容器元素上（比如ul,ol）
