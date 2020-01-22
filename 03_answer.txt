@@ -1,0 +1,30 @@
+你知道vue中key的作用和工作原理吗？说说你对它的理解。
+①v-if中用key管理可复用的元素
+Vue会尽可能高效地渲染元素，通常会复用已有元素而不是从头开始渲染。这么做，除了使Vue变得非常快之外，还有一些
+有用的好处。例如，如果你允许用户在不同的登录方式之间切换：
+<template v-if="loginType==='username'">
+  <label>Username</label>
+  <input placeholder="Enter your username">
+</template>
+<template v-else>
+  <label>Email</label>
+  <input placeholder="Enter your email address">
+</template>
+那么在上面的代码中切换loginType将不会清除用户已经输入的内容。因为两个模板使用了相同的元素，<input>不会被替换掉
+仅仅是替换了他的placeholder.这样也不总是符合实际需求，所以vue为你提供了一种方式来声明“这两个元素是完全独立的
+不要复用他们”。只需添加一个具有唯一值的key熟悉即可：
+<template v-if="loginType==='username'">
+  <label>Username</label>
+  <input placeholder="Enter your username" key="username-input">
+</template>
+<template v-else>
+  <label>Email</label>
+  <input placeholder="Enter your email address" key="email-input">
+</template>
+②v-for中的key
+当vue.js用v-for正在更新已渲染过的元素列表时，它默认用“就地复用”策略。如果数据项的顺序被改变，Vue将不是
+移动DOM元素来匹配数据项的顺序，二十简单复用此处每个元素，并且确保它在特定索引下显示已被渲染过的每个元素。这个类似
+vue1的track-by="$index"
+这个默认的模式是有效的，但是只适用于不依赖子组件状态或临时DOM状态的列表渲染输出。
+为了给Vue一个提示，以便它能跟踪每个节点的身份，从而重用和重新排序现有的元素，你需要为每项提供一个唯一key属性。理想的key值
+是每项都有唯一id.这个特殊的熟悉相当于vue1的track-by，但他的工作方式类似于一个属性，所以你需要用v-bind来绑定动态值。
