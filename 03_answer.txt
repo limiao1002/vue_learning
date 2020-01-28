@@ -17,7 +17,7 @@ Vue会尽可能高效地渲染元素，通常会复用已有元素而不是从�
   <label>Username</label>
   <input placeholder="Enter your username" key="username-input">
 </template>
-<template v-else>
+<template v-else>     
   <label>Email</label>
   <input placeholder="Enter your email address" key="email-input">
 </template>
