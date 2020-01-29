@@ -1,0 +1,11 @@
+谈谈你对vue组件之间通信的理解？
+常见的使用场景可以分为三类：
+父子组件通信
+兄弟组件通信
+跨层组件通信
+1. props 
+2. $emit/$on事件总线
+3. vuex
+4. $parent/$children
+5. $attrs/$listeners
+6. provide/inject
