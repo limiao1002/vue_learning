@@ -1,0 +1,82 @@
+vue-router中的导航钩子有哪些？ vue-router路由传参有几种形式？vue-router路由配置？
+三种形式：
+1、全局导航钩子
+2、路由配置中导航钩子
+3、组件内部导航钩子
+
+1、全局的钩子函数：
+beforeEach(to,from,next)路由改变前调用
+  常用来验证用户权限
+  beforeEach()参数
+  to:即将要进入的目标路由对象
+  from：当前正要离开的路由对象
+  next:路由控制参数
+      next():如果一切正常，则调用这个方法进入下一个钩子
+      next(false):取消导航（即路由不发生改变）
+      next('/login'):当前导航被中断，然后进行一个新导航
+      next(error):如果一个Error实例，则导航会被中止且该错误会被传递给router.onError();
+router.beforeEach((to,from,next)=>{
+  console.log(to.fullPath);
+  if(to.fullPath!='/login'){//如果不是登录组件
+    if(!localStorage.getItem('username')){//如果没有登录，就先进入login组件进行登录
+      next('/login')
+    }else{//如果登录了 那就继续
+      next()
+    }
+  }else{//如果时登录组件，那就继续。
+    next()
+  }
+})
+
+afterEach(to,from)路由改变后的钩子
+  常用来自动让页面返回最顶端
+
+2、路由配置中导航钩子
+beforeEnter(to,from,next)
+
+const router = new VueRouter({
+  routes:[
+    {
+      path:'/foo',
+      component:Foo,
+      beforeEnter:(to,from,next){
+        //...
+      }
+    }
+  ]
+})
+
+3、组件内部导航钩子
+①beforeRouteEnter(to,from,next)
+该组件的对应路由被confirm前调用
+此时实例还没被创建，所以不能获取实例（this）
+②beforeRouteUpdate(to,from,next)
+当前路由改变，但该组件被复用时候调用
+该函数内可以访问组件实例(this)
+③beforeRouteLeave(to,from,next)
+当导航离开组件的对应路由时调用
+该函数内可以访问获取组件实例(this)
+const Foo = {
+  template:`...`,
+  beforeRouteEnter(to,from,next){
+    //在渲染该组件的对应路由被confirm前调用
+    //不能或租组件实例this,因为当钩子执行前，组件实例还没被创建
+  },
+  beforeRouteUpdate(to,from,next){
+
+  },
+  beforeRouteLeave(to,from,next){
+
+  }
+}
+4、路由监测变化
+监听到路由对象发生变化，从而对路由变化做出响应
+const user = {
+  template:`<div></div>`,
+  watch:{
+    '$route' (to,from){
+      //to,from分别表示从哪跳转到哪，都是一个对象
+      //to.path(表示的是要跳转的路由地址)
+    }
+  }
+}

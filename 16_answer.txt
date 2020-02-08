@@ -1,0 +1,20 @@
+VUE的nextTick方法的实现原理：
+1、vue用异步队列的方式来控制DOM更新和nextTick回调先后执行
+2、microtask因为其高优先级特性，能确保队列中的微任务在一侧事件循环前被执行完毕
+3、因为兼容性问题，vue不得不做了microtask向macrotask的降级方案。
+vue的数据响应过程包含：数据更改-》通知watcher-》更新DOM。而数据更改不由我们控制，可能在任何时候发生。如果恰巧发生在重绘之前，
+就会发生多次渲染。这意味着性能浪费，是vue不愿意看到的。
+microtask
+每一次事件循环都包含一个microtask队列，在循环结束后会依次执行队列中的microtask并移除，然后再开始下一次事件循环。
+macrotask总要等到microtask都执行完后才能执行，microtask有着更高的优先级。
+vue进行DOM更新内部也是调用nextTick来做异步队列控制。当我们自己调用nextTick的时候，他就在更新DOM的那个microtask后追加了我们自己的回调函数，
+从而确保我们的代码在DOM更新后执行，同时避免了setTimeout可能存在的多次执行的问题。
+常见的microtask有：Promise、MutationObserver、Object.observe(废弃)，以及nodejs中的process.nextTick.
+
+vue的降级策略
+队列控制最佳选择是microtask(微任务)，而microtask的最佳选择是Promise.但如果当前环境不支持Promise,
+vue就不得不降级为macrotask(宏任务)来做队列控制了。
+macrotask可选方案依次是：setImmediate、MessageChannel、setTimeout. setImmediate是最理想方案，可惜只有IE和nodejs支持。
+MessageChannel的onmessage回调也是microtask,但也是个新API,面临兼容性的尴尬。setTimeout执行的最小时间间隔是约4ms的样子，略微有点延迟。
+所以最后兜底的方案就是setTimeout了，尽管它有执行延迟，
+可能造成多次渲染，算是没有办法的办法了。

@@ -1,0 +1,2 @@
+你对vue生命周期的理解？
+vue生命周期包括beforeCreate,created,beforeMount,mounted,beforeUpdate,updated,beforeDestroy,destroyed.
