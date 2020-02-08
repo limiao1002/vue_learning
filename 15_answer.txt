@@ -2,6 +2,9 @@ vuex的使用及其理解？
 1.vuex是什么？
 2.核心概念是什么？
 state;mutation;action;getter;model
+3.怎么做数据存储？
+4.什么情况下应该使用vuex.
+
 每一个vuex应用的核心就是store（仓库）。
 vuex和单纯的全局对象有以下两点不同：
 ①Vuex的状态存储时响应式的。当Vue组件从store中读取状态的时候，若store中的状态发生变化，那么
