@@ -1,0 +1,74 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>深度克隆</title>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+  //深度克隆（对数组，对象，函数有用）
+  //不太完美的克隆方式 1. Object.assign({},source)只克隆一层 
+  // 2.JSON.parse(JSON.stringify()) 如果循环引用会出现内存泄漏报错；无法复制特殊的对象和函数；抛弃constructor,所有构造函数都指向Object
+
+  //1.类型判断 2.递归
+  let isType = (obj,type)=>{
+    if(typeof obj !== 'object') return false;
+    let typeString = Object.prototype.toString.call(obj);
+    let flag;
+    switch(type){
+      case "Array":
+      flag = typeString=="[object Array]";
+      break;
+      default:
+      flag=false;
+    }
+    return flag;
+  }
+  //source原对象，target克隆后对象
+  let argS=[];let argT=[];
+  let deepClone = source=>{
+    if(source === null) return null;
+    if(typeof source !== 'object') return source;
+    let target,proto;
+    if(isType(source,"Array")){
+      target = []
+    }else{
+      //拿到source原型对象
+      proto = Object.getPrototypeOf(source)
+      target = Object.create(proto)
+    }
+    let index = argS.indexOf(source);//这项在数组中的索引
+    if(index!=-1){
+      return target[index]
+    }
+    argS.push(source);
+    argT.push(target)
+    for(let i in source){
+      target[i]=deepClone(source[i])
+    }
+    return target;
+  }
+  let source = {
+    a:"a",
+    b:{
+      name:'lilei'
+    },
+    c:function(){
+      console.log("c")
+    },
+    d:[2,3,4]
+  }
+
+  let target = deepClone(source);
+  target.a = "aaa"
+  target.b.name ="zhufeng"
+  target.d[2]=6;
+  console.log(source);
+  console.log(target);
+
+   
+
+</script>

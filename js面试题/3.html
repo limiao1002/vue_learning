@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS深入bind的模拟实现</title>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+  //bind函数的用法：1.第一个参数this,2.传入的参数
+  //bind的两个特点 1.返回函数 2.可以传入参数（传递预置的参数）
+  // 封装思路：1、返回函数 2、处理this 3、参数处理 4、构造函数的模拟实现
+  Function.prototype.bind2 = function(context){
+    //this指的是fn
+    let self =this;
+    //arguments类数组
+    let arg1 = Array.prototype.slice.call(arguments,1);
+    let Fn = function(){
+      let arg2 = Array.prototype.slice.call(arguments);
+      self.apply(this instanceof Fn ? this : context,arg1.concat(arg2))
+    }
+    Fn.prototype = Object.create(this.prototype);//实例可以继承绑定函数原型中的值
+    return Fn
+  }
+  let obj = {
+    value:1
+  }
+  function fn(name,age){
+    // console.log(this.value);
+    this.age = age;
+    console.log(name)
+    console.log(age)
+  }
+  fn.prototype.aa = "asddd"
+  let res = fn.bind2(obj,"lily");
+  let r = new res(20)
+  console.log(r.age);
+  console.log(r.aa)
+
+</script>

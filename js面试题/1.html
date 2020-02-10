@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>防抖和节流</title>
+</head>
+<body>
+  防抖：<input type="text" id="input1">
+  <br/>
+  节流：<input type="text" id="input2">
+</body>
+</html>
+<script>
+  //防抖原理：多次触发事件时，只触发一次回调，在事件被触发n秒后执行回调，如果在n秒内再次被触发则重新。
+  function debounce(fn,delay){
+    var timer = null;
+    return (...args)=>{
+      clearTimeout(timer);
+      timer = window.setTimeout(()=>{
+        fn.apply(this,args)
+      },delay)
+    }
+  }
+  let input1 = document.getElementById('input1');
+  let fn = debounce(function(e){
+    console.log("防抖成功：",e.target.value)
+  },1000)
+  input1.addEventListener("input",fn);
+
+  //节流原理：规定在单位时间内只触发一次函数，如果在单位时间内多次触发函数，只有一次生效  
+  function throttle(fn,delay){
+    let timer = null;
+    let flag = true;
+    return (...args)=>{
+      if(!flag) return;
+      clearTimeout(timer);
+      flag = false;
+      timer = setTimeout(()=>{
+        fn.apply(this,args);
+        flag = true;
+      },delay)
+    }
+  }
+  let input2 = document.getElementById('input2');
+  let fn2 = throttle(function(e){
+    console.log('节流成功：',e.target.value)
+  },1000)
+  input2.addEventListener('input',fn2)
+</script>
